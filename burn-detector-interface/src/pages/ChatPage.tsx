@@ -13,7 +13,7 @@ const ChatPage: React.FC = () => {
   const imageUrl = sessionStorage.getItem("burnImage");
 
   useEffect(() => {
-    if (!imageUrl) {
+    if (!imageUrl || !imageUrl.startsWith("data:image")) {
       navigate("/");
       return;
     }
@@ -25,9 +25,18 @@ const ChatPage: React.FC = () => {
       await wait(1500);
 
       try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const file = new File([blob], "imagen.jpg", { type: blob.type });
+        function base64ToFile(base64: string, filename: string): File {
+          const arr = base64.split(",");
+          const mime = arr[0].match(/:(.*?);/)?.[1] || "";
+          const bstr = atob(arr[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          return new File([u8arr], filename, { type: mime });
+        }
+        const file = base64ToFile(imageUrl, "imagen.jpg");
 
         const formData = new FormData();
         formData.append("image", file);
@@ -37,38 +46,53 @@ const ChatPage: React.FC = () => {
           body: formData,
         });
 
-        const uploadData = await uploadRes.json();
         if (!uploadRes.ok) {
           throw new Error("Error al subir imagen");
         }
 
-        const savedImageUrl = "http://localhost:5000" + uploadData.imageUrl;
-
         const predictForm = new FormData();
         predictForm.append("image", file);
 
-        const res = await fetch("http://127.0.0.1:5000/predict", {
+        const res = await fetch("http://127.0.0.1:5001/predict", {
           method: "POST",
           body: predictForm,
         });
 
         const data = await res.json();
+        sessionStorage.setItem(
+          "burnImage",
+          "http://localhost:5001" + data.processedImage
+        ); // 👈 nueva línea
+        sessionStorage.setItem("diagnosticoQuemadura", JSON.stringify(data));
 
         if (res.ok) {
+          const savedImageUrl = "http://localhost:5001" + data.processedImage;
           sessionStorage.setItem("diagnosticoQuemadura", JSON.stringify(data));
           addBotMessage(`Diagnóstico: ${data.grado} (${data.confianza}%)`);
           await wait(2500);
 
-          const userId = localStorage.getItem("userId");
+          const storedUserId = localStorage.getItem("userId");
+          const userId = storedUserId ? Number(storedUserId) : null;
+          if (!userId || isNaN(userId)) {
+            console.warn("⚠️ userId inválido o ausente:", storedUserId);
+          }
+
           if (userId) {
             try {
+              console.log("💾 Enviando a /api/chat/save:", {
+                userId,
+                imageUrl: savedImageUrl,
+                grado: data.grado,
+                confianza: data.confianza,
+                recomendaciones: data.recomendaciones,
+              });
               const saveRes = await fetch(
                 "http://localhost:5000/api/chat/save",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    userId,
+                    userId: Number(userId),
                     imageUrl: savedImageUrl,
                     grado: data.grado,
                     confianza: data.confianza,

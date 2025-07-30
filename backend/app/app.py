@@ -1,25 +1,41 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
-import random
+import subprocess
+import os
+import uuid
 
 app = Flask(__name__)
-CORS(app)
+UPLOAD_FOLDER = "inference/images"
+MODEL_WEIGHTS = "./DataSetBurnIA.pt"
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if "image" not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
+    if 'image' not in request.files:
+        return jsonify({'error': 'No se envió imagen'}), 400
+    
+    image = request.files['image']
+    filename = f"{uuid.uuid4().hex}.jpg"
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    image.save(filepath)
 
-    # Diagnóstico falso aleatorio para simular IA
-    grados = ['Primer grado', 'Segundo grado', 'Tercer grado']
-    grado = random.choice(grados)
-    confianza = round(random.uniform(80, 99), 2)
+    # Ejecuta el script detect.py
+    result = subprocess.run(
+        ["python", "detect.py", "--weights", MODEL_WEIGHTS, "--source", filepath],
+        capture_output=True,
+        text=True
+    )
 
-    return jsonify({
-        "grado": grado,
-        "confianza": confianza,
-        "recomendaciones": "Minecraft."
-    })
+    # Aquí deberías extraer los datos del resultado generado por detect.py
+    # Supongamos que los resultados se guardan en un JSON o archivo similar
+    # o puedes parsear stdout de `result.stdout`
+
+    # Simulación:
+    output = {
+        "grado": "Segundo grado",
+        "confianza": 91.5,
+        "recomendaciones": "Lavar con agua fría, cubrir y consultar médico."
+    }
+
+    return jsonify(output)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(port=5001, debug=True)

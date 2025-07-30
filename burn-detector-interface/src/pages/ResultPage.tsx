@@ -183,7 +183,7 @@ const ResultPage: React.FC = () => {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
               className="uiverse-button"
-              onClick={() => handleNavigate("/upload")}
+              onClick={() => handleNavigate("/UploadPage")}
             >
               <span className="mr-2">➕</span> Nueva Imagen
             </button>

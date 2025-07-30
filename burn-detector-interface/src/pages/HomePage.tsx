@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -176,7 +177,8 @@ const HomePage = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al registrar");
 
-      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userId", data.userId || data.id);
+
       toast.success("Cuenta creada correctamente.");
       setOpen(false);
       navigate("/UploadPage");
@@ -203,7 +205,8 @@ const HomePage = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error de login");
 
-      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userId", data.userId || data.id);
+
       toast.success("Inicio de sesión exitoso");
       setOpen(false);
       navigate("/UploadPage");
@@ -252,7 +255,12 @@ const HomePage = () => {
               <DialogTitle className="text-2xl font-bold text-teal-600 dark:text-teal-300 text-center">
                 <span className="mr-2">👤</span> Acceso
               </DialogTitle>
+              <DialogDescription className="text-center text-sm text-gray-500 dark:text-gray-400">
+                Inicia sesión o crea una cuenta para continuar con el
+                diagnóstico.
+              </DialogDescription>
             </DialogHeader>
+
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="tabs-list grid grid-cols-2">
                 <TabsTrigger value="login" className="tabs-trigger">

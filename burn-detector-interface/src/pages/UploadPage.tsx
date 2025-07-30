@@ -12,7 +12,12 @@ const UploadPage: React.FC = () => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result as string;
+        setPreviewUrl(base64);
+      };
+      reader.readAsDataURL(file); // convierte a base64
     }
   };
 

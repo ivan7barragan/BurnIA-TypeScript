@@ -6,9 +6,12 @@ const db = require("../db"); // Asegúrate que este archivo exporta la conexión
 router.post("/save", (req, res) => {
   const { userId, grado, confianza, recomendaciones, imageUrl } = req.body;
 
-  if (!userId || !grado || confianza === undefined || !recomendaciones) {
-    return res.status(400).json({ error: "Faltan campos requeridos" });
-  }
+  if (!userId) return res.status(400).json({ error: "Falta userId" });
+  if (!grado) return res.status(400).json({ error: "Falta grado" });
+  if (confianza === undefined)
+    return res.status(400).json({ error: "Falta confianza" });
+  if (!recomendaciones)
+    return res.status(400).json({ error: "Falta recomendaciones" });
 
   try {
     db.prepare(
