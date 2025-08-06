@@ -41,7 +41,7 @@ const ChatPage: React.FC = () => {
         const formData = new FormData();
         formData.append("image", file);
 
-        const uploadRes = await fetch("http://localhost:5000/api/upload", {
+        const uploadRes = await fetch("http://10.0.20.51:5000/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -53,7 +53,7 @@ const ChatPage: React.FC = () => {
         const predictForm = new FormData();
         predictForm.append("image", file);
 
-        const res = await fetch("http://127.0.0.1:5001/predict", {
+        const res = await fetch("http://10.0.20.51:5001/predict", {
           method: "POST",
           body: predictForm,
         });
@@ -61,12 +61,12 @@ const ChatPage: React.FC = () => {
         const data = await res.json();
         sessionStorage.setItem(
           "burnImage",
-          "http://localhost:5001" + data.processedImage
+          "http://10.0.20.51:5001" + data.processedImage
         ); // 👈 nueva línea
         sessionStorage.setItem("diagnosticoQuemadura", JSON.stringify(data));
 
         if (res.ok) {
-          const savedImageUrl = "http://localhost:5001" + data.processedImage;
+          const savedImageUrl = "http://10.0.20.51:5001" + data.processedImage;
           sessionStorage.setItem("diagnosticoQuemadura", JSON.stringify(data));
           addBotMessage(`Diagnóstico: ${data.grado} (${data.confianza}%)`);
           await wait(2500);
@@ -87,7 +87,7 @@ const ChatPage: React.FC = () => {
                 recomendaciones: data.recomendaciones,
               });
               const saveRes = await fetch(
-                "http://localhost:5000/api/chat/save",
+                "http://10.0.20.51:5000/api/chat/save",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },

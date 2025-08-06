@@ -17,7 +17,11 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/auth", authRoutes); // si aplica
 
 // Puerto
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+//const PORT = 5000;
+//app.listen(PORT, () => {
+//  console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
+//});
+app.listen(5000, '10.0.20.51', () => {
+  console.log(`🚀 Servidor corriendo en http://10.0.20.51:5000`);
 });
+
