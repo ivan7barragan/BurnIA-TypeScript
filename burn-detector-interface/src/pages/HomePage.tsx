@@ -13,7 +13,7 @@ import {
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import DarkModeToggle from "../components/DarkModeToggle";
+import { Sun, Moon } from "lucide-react"; // For theme toggle icons
 
 // Unified modern styles
 const customStyles = `
@@ -99,21 +99,47 @@ const customStyles = `
     transform: scale(1.05);
   }
 
-  .dark-mode-toggle {
+  .theme-toggle {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
     position: absolute;
     top: 1.25rem;
     right: 1.25rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 12px;
-    padding: 8px;
+    color: #2dd4bf;
+  }
+
+  .theme-toggle:hover {
+    background: rgba(45, 212, 191, 0.1);
+    transform: rotate(180deg) scale(1.1);
+    box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.3);
+  }
+
+  .theme-toggle svg {
     transition: all 0.3s ease;
   }
 
-  .dark .dark-mode-toggle {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .dark .theme-toggle svg:first-child {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .theme-toggle svg:last-child {
+    position: absolute;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  .dark .theme-toggle svg:last-child {
+    opacity: 1;
+    transform: scale(1);
   }
 
   .tabs-list {
@@ -145,12 +171,19 @@ const customStyles = `
 
 const HomePage = () => {
   const [open, setOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false); // Local state for theme toggle
   const navigate = useNavigate();
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirm, setRegisterConfirm] = useState("");
+
+  // Theme toggle function (same as in Navbar)
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle("dark");
+  };
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -166,7 +199,7 @@ const HomePage = () => {
       return;
     }
     try {
-      const res = await fetch("http://10.0.20.51:5000/api/auth/register", {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,7 +227,7 @@ const HomePage = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://10.0.20.51:5000/api/auth/login", {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -223,15 +256,17 @@ const HomePage = () => {
     <>
       <style>{customStyles}</style>
       <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-emerald-100 dark:from-zinc-900 dark:via-teal-950 dark:to-black px-4 sm:px-6 lg:px-8 py-12 flex items-center justify-center">
-        <div className="dark-mode-toggle">
-          <DarkModeToggle />
-        </div>
+        {/* Theme Toggle Button (same as in Navbar) */}
+        <button className="theme-toggle" onClick={toggleDarkMode}>
+          <Sun size={20} />
+          <Moon size={20} />
+        </button>
         <div className="glassmorphism p-6 sm:p-10 max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           <div className="flex justify-center">
             <img
-              src="https://www.svgrepo.com/show/305868/burn.svg"
+              src="/10281650.png"
               alt="Burn Diagnosis Icon"
-              className="w-48 h-48 sm:w-64 sm:h-64 hero-image dark:invert"
+              className="hero-image w-[clamp(120px,28vw,220px)] h-auto dark:invert"
             />
           </div>
           <div className="text-center lg:text-left space-y-6">

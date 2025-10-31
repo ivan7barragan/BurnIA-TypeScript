@@ -1,45 +1,28 @@
+/* =========================================================
+   index.css — Tailwind + Theme tokens + utilidades UI
+   ========================================================= */
+
+/* Extensiones/animaciones opcionales que usabas */
 @import "tw-animate-css";
 
+/* Variante de Tailwind para dark mode basada en clase .dark */
 @custom-variant dark (&:is(.dark *));
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 🟣 Estilos globales para modo oscuro */
-html.dark {
-  background-color: #0f172a; /* fondo global */
-  color: #f9fafb; /* texto global */
-}
-
-html.dark a {
-  color: #93c5fd; /* enlaces */
-}
-
-html.dark button {
-  background-color: #1f2937; /* botones */
-  color: #f9fafb;
-}
-
-html.dark input[type="file"] {
-  background-color: #374151;
-  color: #f9fafb;
-}
-
-html.dark img {
-  border: 1px solid #f3f4f6; /* borde blanco/gris claro */
-}
-
-/* Opcional: efecto de transición suave */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
+/* =========================================================
+   Tokens del tema (OKLCH) y escalas de radio
+   ========================================================= */
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Mapas de tokens a color-* para poder usar en Tailwind */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -73,31 +56,43 @@ html.dark img {
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ===== Escala base y tema claro ===== */
 :root {
   --radius: 0.625rem;
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
+
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
+
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
+
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
+
   --destructive: oklch(0.577 0.245 27.325);
+
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -108,30 +103,41 @@ html.dark img {
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ===== Tema oscuro (se activa con .dark en <html> o <body>) ===== */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
+
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
+
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
+
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
+
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
+
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
+
   --destructive: oklch(0.704 0.191 22.216);
+
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -142,11 +148,166 @@ html.dark img {
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* =========================================================
+   Base layer: alinear shadcn/tailwind con tokens
+   ========================================================= */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html,
+  body {
+    height: 100%;
+  }
   body {
     @apply bg-background text-foreground;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+      Inter, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   }
+}
+
+/* =========================================================
+   Utilidades UI (opt-in) — performance friendly
+   ========================================================= */
+
+/* Transición suave solo si agregas .theme-transition al <body> */
+.theme-transition * {
+  transition: background-color 200ms ease, color 200ms ease,
+    border-color 200ms ease, box-shadow 200ms ease;
+}
+
+/* Tarjetas con efecto vidrio usando tus tokens */
+.ui-glass {
+  background: color-mix(in oklch, var(--card) 80%, transparent);
+  backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  box-shadow: 0 10px 40px oklch(0 0 0 / 0.15);
+  border-radius: var(--radius-xl, 1rem);
+}
+.dark .ui-glass {
+  background: color-mix(in oklch, var(--card) 60%, transparent);
+  box-shadow: 0 10px 40px oklch(0 0 0 / 0.35);
+}
+.image-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* 👈 límite máximo */
+  aspect-ratio: 4 / 3;
+  margin: 0 auto; /* centra dentro de la tarjeta */
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(
+    45deg,
+    rgba(45, 212, 191, 0.1),
+    rgba(20, 184, 166, 0.1)
+  );
+  border: 1px solid rgba(20, 184, 166, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.normalized-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* recorta sin deformar */
+  object-position: center;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.normalized-image:hover {
+  transform: scale(1.03);
+}
+
+/* Fondos decorativos sutiles (usa con clase .bg-auth y .bg-grid) */
+.bg-auth {
+  background-image: radial-gradient(
+      1200px 800px at 0% 0%,
+      color-mix(in oklch, var(--accent) 20%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      1000px 600px at 100% 100%,
+      color-mix(in oklch, var(--primary) 20%, transparent) 0%,
+      transparent 60%
+    );
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+.bg-grid {
+  background-image: linear-gradient(
+      to right,
+      color-mix(in oklch, var(--border) 35%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--border) 35%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 24px 24px;
+}
+
+/* Tabs de shadcn: trigger activo resaltado con --primary */
+[data-state="active"].ui-tab {
+  color: var(--primary);
+  box-shadow: inset 0 -2px 0 0 var(--primary);
+  font-weight: 700;
+}
+
+/* Inputs con foco consistente */
+.ui-input {
+  background: color-mix(in oklch, var(--card) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) + 2px);
+}
+.ui-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--primary) 35%, transparent);
+  border-color: var(--primary);
+}
+
+/* Botón con gradiente accesible (puedes usar en shadcn via className) */
+.btn-gradient {
+  background: linear-gradient(
+    45deg,
+    oklch(0.78 0.16 180),
+    oklch(0.76 0.11 150)
+  );
+  background-size: 200% 200%;
+  animation: btnGrad 8s ease infinite;
+  color: oklch(0.985 0 0);
+  border-radius: calc(var(--radius) + 6px);
+  font-weight: 700;
+}
+.btn-gradient:hover {
+  transform: translateY(-1px);
+}
+.btn-gradient:disabled {
+  filter: grayscale(0.4) opacity(0.8);
+}
+@keyframes btnGrad {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Imagen “hero” con sombra sutil (opcional) */
+.hero-image {
+  filter: drop-shadow(0 8px 24px oklch(0 0 0 / 0.2));
+  transition: transform 0.25s ease;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.hero-image:hover {
+  transform: scale(1.03);
 }

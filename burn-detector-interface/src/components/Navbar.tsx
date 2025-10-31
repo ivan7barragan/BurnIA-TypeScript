@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import DarkModeToggle from "./DarkModeToggle";
+import { toast } from "react-toastify";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ImageUp,
   MessageCircle,
@@ -9,93 +10,37 @@ import {
   LogOut,
   X,
   SquareMenu,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false); // Local state for theme animation
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
-    navigate("/");
+    toast.success("Sesión cerrada correctamente.");
+    navigate("/", { replace: true });
+  };
+
+  const toggleDarkMode = () => {
+    setIsDark(!isDark);
+    document.documentElement.classList.toggle("dark");
   };
 
   const menuItems = [
-    { to: "/UploadPage", label: "Subir Imagen", icon: <ImageUp size={18} /> },
-    { to: "/chat", label: "Chat", icon: <MessageCircle size={18} /> },
-    { to: "/result", label: "Resultado", icon: <FileBarChart2 size={18} /> },
-    { to: "/history", label: "Historial", icon: <History size={18} /> },
+    { to: "/UploadPage", label: "Subir Imagen", icon: ImageUp },
+    { to: "/chat", label: "Chat", icon: MessageCircle },
+    { to: "/result", label: "Resultado", icon: FileBarChart2 },
+    { to: "/history", label: "Historial", icon: History },
   ];
 
   return (
     <>
       <style>{`
-        .uiverse-button {
-          background: linear-gradient(135deg, #e0f2f1, #c7eaea);
-          color: #1f2937;
-          border: 1px solid rgba(20, 184, 166, 0.3);
-          border-radius: 8px;
-          padding: 6px 12px;
-          font-family: 'Inter', sans-serif;
-          font-weight: 600;
-          font-size: 0.9rem;
-          letter-spacing: 0.3px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 8px rgba(255, 255, 255, 0.2);
-          transition: all 0.3s ease;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .uiverse-button:hover:not(:disabled) {
-          background: linear-gradient(135deg, #14b8a6, #2dd4bf);
-          color: white;
-          transform: translateY(-2px) scale(1.05);
-          box-shadow: 0 6px 16px rgba(20, 184, 166, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.25);
-        }
-
-        .uiverse-button:disabled {
-          background: #d1d5db;
-          color: #9ca3af;
-          box-shadow: none;
-          transform: none;
-          cursor: not-allowed;
-        }
-
-        .uiverse-button.delete {
-          background: linear-gradient(135deg, #f87171, #f1a9a9);
-          color: white;
-          border: 1px solid rgba(248, 113, 113, 0.3);
-          padding: 6px;
-        }
-
-        .uiverse-button.delete:hover:not(:disabled) {
-          background: linear-gradient(135deg, #ef4444, #f472b6);
-          color: white;
-          transform: translateY(-2px) scale(1.05);
-          box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.25);
-        }
-
-        .uiverse-button.delete::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 0;
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          transition: width 0.6s ease, height 0.6s ease;
-        }
-
-        .uiverse-button.delete:hover::after {
-          width: 150px;
-          height: 150px;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 
         .glassmorphism-nav {
           background: rgba(255, 255, 255, 0.1);
@@ -116,24 +61,47 @@ const Navbar = () => {
           border-right: 1px solid rgba(20, 184, 166, 0.05);
         }
 
-        .dark-mode-toggle {
-          background: rgba(255, 255, 255, 0.1);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
-          padding: 20px;
+        .theme-toggle {
+          background: transparent;
+          border: none;
+          border-radius: 50%;
+          width: 36px;
+          height: 36px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
           transition: all 0.3s ease;
+          position: relative;
+          overflow: hidden;
           margin-right: 0.5rem;
         }
 
-        .dark .dark-mode-toggle {
-          background: rgba(0, 0, 0, 0.4);
-          border: 1px solid rgba(255, 255, 255, 0.03);
+        .theme-toggle:hover {
+          background: rgba(45, 212, 191, 0.1);
+          transform: rotate(180deg) scale(1.1);
+          box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.3);
         }
 
-        .dark-mode-toggle:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
+        .theme-toggle svg {
+          transition: all 0.3s ease;
+          color: #2dd4bf;
+        }
+
+        .dark .theme-toggle svg:first-child {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+
+        .theme-toggle svg:last-child {
+          position: absolute;
+          opacity: 0;
+          transform: scale(0.8);
+        }
+
+        .dark .theme-toggle svg:last-child {
+          opacity: 1;
+          transform: scale(1);
         }
 
         .nav-link {
@@ -143,11 +111,23 @@ const Navbar = () => {
           overflow: hidden;
           text-overflow: ellipsis;
           max-width: 50%;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 8px;
+          text-decoration: none;
+          color: #374151;
+        }
+
+        .dark .nav-link {
+          color: #d1d5db;
         }
 
         .nav-link:hover {
           color: #2dd4bf !important;
-          transform: scale(1.05);
+          background: rgba(45, 212, 191, 0.1);
+          transform: scale(1.02);
         }
 
         .nav-link::after {
@@ -155,7 +135,7 @@ const Navbar = () => {
           position: absolute;
           width: 0;
           height: 2px;
-          bottom: -4px;
+          bottom: 0;
           left: 0;
           background: #2dd4bf;
           transition: width 0.3s ease;
@@ -165,97 +145,200 @@ const Navbar = () => {
           width: 100%;
         }
 
-        .mobile-menu {
-          animation: slideIn 0.3s ease-out;
+        .logout-button {
+          background: transparent;
+          border: 1px solid transparent;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-family: 'Inter', sans-serif;
+          font-weight: 600;
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          color: #374151;
+          position: relative;
+          overflow: hidden;
         }
 
-        @keyframes slideIn {
-          from {
-            transform: translateY(-10px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
+        .dark .logout-button {
+          color: #d1d5db;
+        }
+
+        .logout-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #ef4444, #dc2626);
+          transition: left 0.3s ease;
+          z-index: -1;
+        }
+
+        .logout-button:hover::before {
+          left: 0;
+        }
+
+        .logout-button:hover {
+          color: white;
+          border-color: #ef4444;
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .mobile-menu {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+          margin-top: 0.5rem;
+          padding: 1rem;
+        }
+
+        .dark .mobile-menu {
+          background: rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .hamburger {
+          transition: all 0.3s ease;
+          background: transparent;
+          border: none;
+          padding: 4px;
+          border-radius: 4px;
+          color: #374151;
+        }
+
+        .dark .hamburger {
+          color: #d1d5db;
+        }
+
+        .hamburger:hover {
+          background: rgba(45, 212, 191, 0.1);
+          color: #2dd4bf;
+          transform: rotate(90deg);
+        }
+
+        body {
+          font-family: 'Inter', sans-serif;
         }
 
         @media (max-width: 640px) {
           .nav-link {
-            max-width: 70px;
-          }
-          .uiverse-button {
-            padding: 4px 8px;
-            font-size: 0.7rem;
-          }
-          .uiverse-button.delete {
-            padding: 4px;
-          }
-          .uiverse-button.delete::after {
-            width: 120px;
-            height: 120px;
+            max-width: 100%;
+            justify-content: flex-start;
           }
           .glassmorphism-nav {
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem;
           }
         }
       `}</style>
-      <nav className="glassmorphism-nav px-3 sm:px-5 py-3 relative">
+      <nav
+        className="glassmorphism-nav"
+        role="navigation"
+        aria-label="Navegación principal"
+      >
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          {/* Izquierda: Botón menú mobile */}
-          <div className="md:hidden flex items-center">
-            <button
-              className="text-zinc-800 dark:text-white hover:text-teal-500 transition"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+          {/* Mobile hamburger - Minimal with color change in dark mode */}
+          <motion.button
+            className="md:hidden hamburger"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-expanded={isMenuOpen}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isMenuOpen ? <X size={20} /> : <SquareMenu size={20} />}
+          </motion.button>
+
+          {/* Logo/Title - Centered */}
+          <motion.div
+            className="absolute left-1/2 transform -translate-x-1/2 text-xl sm:text-2xl font-extrabold text-teal-600 dark:text-teal-300 whitespace-nowrap"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            Burn IA
+          </motion.div>
+
+          {/* Right: Theme toggle & Logout */}
+          <div className="flex items-center space-x-2">
+            <motion.button
+              className="theme-toggle"
+              onClick={toggleDarkMode}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label={
+                isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
+              }
             >
-              {isMenuOpen ? <X size={18} /> : <SquareMenu size={18} />}
-            </button>
-          </div>
-
-          {/* Centro: Nombre de la app */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 text-xl sm:text-2xl font-extrabold text-teal-600 dark:text-teal-300 text-shadow-sm whitespace-nowrap overflow-hidden text-ellipsis w-36 sm:w-44 mx-2">
-            IA Quemaduras
-          </div>
-
-          {/* Derecha: Darkmode y logout */}
-          <div className="flex items-center space-x-6 ml-auto mr-4">
-            <div className="dark-mode-toggle">
-              <DarkModeToggle />
-            </div>
-            <button onClick={handleLogout} className="uiverse-button delete">
+              <Sun size={20} />
+              <Moon size={20} />
+            </motion.button>
+            <motion.button
+              onClick={handleLogout}
+              className="logout-button text-sm"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Cerrar sesión"
+            >
               <LogOut size={16} />
-            </button>
+              Salir
+            </motion.button>
           </div>
         </div>
 
-        {/* Dropdown móvil */}
-        {isMenuOpen && (
-          <div className="md:hidden mt-3 flex flex-col space-y-3 text-sm px-3 pb-2 bg-white/40 dark:bg-zinc-800/40 rounded-lg shadow-md border border-teal-200/30 dark:border-teal-900/30 mobile-menu">
-            {menuItems.map(({ to, label, icon }) => (
-              <Link
-                key={to}
-                to={to}
-                className="nav-link flex items-center gap-1 text-zinc-700 dark:text-zinc-200 hover:text-teal-500"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {icon}
-                {label}
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Menú desktop */}
-        <div className="hidden md:flex justify-center mt-3 space-x-6 text-sm">
-          {menuItems.map(({ to, label, icon }) => (
-            <Link
-              key={to}
-              to={to}
-              className="nav-link flex items-center gap-1 text-zinc-700 dark:text-zinc-200 hover:text-teal-500"
+        {/* Mobile Menu - Original boxy dropdown */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              className="md:hidden mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              {icon}
-              {label}
-            </Link>
+              {menuItems.map(({ to, label, icon: Icon }) => (
+                <motion.div
+                  key={to}
+                  whileHover={{ x: 5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
+                  <Link
+                    to={to}
+                    className="nav-link block text-zinc-700 dark:text-zinc-200 hover:text-teal-500 py-2"
+                    onClick={() => setIsMenuOpen(false)}
+                    aria-label={`Navegar a ${label}`}
+                  >
+                    <Icon size={18} />
+                    <span>{label}</span>
+                  </Link>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex justify-center mt-3 space-x-6">
+          {menuItems.map(({ to, label, icon: Icon }) => (
+            <motion.div
+              key={to}
+              whileHover={{ y: -2 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <Link
+                to={to}
+                className="nav-link text-zinc-700 dark:text-zinc-200 hover:text-teal-500"
+                aria-label={`Navegar a ${label}`}
+              >
+                <Icon size={18} />
+                <span>{label}</span>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </nav>
