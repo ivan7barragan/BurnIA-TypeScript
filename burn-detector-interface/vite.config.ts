@@ -11,7 +11,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['burn-ia.loc'],
+    allowedHosts: ['burn-ia.local'],
     host: '0.0.0.0',  // opcional, útil si accedes desde otras máquinas
     port: 5173        // tu puerto actual
   },
