@@ -10,4 +10,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
+  server: {
+    allowedHosts: ['burn-ia.loc'],
+    host: '0.0.0.0',  // opcional, útil si accedes desde otras máquinas
+    port: 5173        // tu puerto actual
+  },
 });
+
+
