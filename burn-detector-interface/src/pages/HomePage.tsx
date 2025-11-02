@@ -199,7 +199,7 @@ const HomePage = () => {
       return;
     }
     try {
-      const res = await fetch("http://10.0.20.50:5000/api/auth/register", {
+      const res = await fetch("http://backend.burn-ia.local:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -227,7 +227,7 @@ const HomePage = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://10.0.20.50:5000/api/auth/login", {
+      const res = await fetch("http://backend.burn-ia.local:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

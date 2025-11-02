@@ -151,7 +151,7 @@ const ChatPage: React.FC = () => {
 
         const formData = new FormData();
         formData.append("image", file);
-        const uploadRes = await fetch("http://10.0.20.50:5000/api/upload", {
+        const uploadRes = await fetch("http://backend.burn-ia.local:5000/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -160,7 +160,7 @@ const ChatPage: React.FC = () => {
 
         const predictForm = new FormData();
         predictForm.append("image", file);
-        const res = await fetch("http://10.0.20.50:5001/predict", {
+        const res = await fetch("http://detector.burn-ia.local:5001/predict", {
           method: "POST",
           body: predictForm,
         });
@@ -194,7 +194,7 @@ const ChatPage: React.FC = () => {
 
         const processedImage = data.processedImage || "";
         const savedImageUrl = processedImage
-          ? `http://10.0.20.50:5001${processedImage}`
+          ? `http://detector.burn-ia.local:5001${processedImage}`
           : imageUrl;
 
         // ✅ Guardar para /result (NO setStorage, NO borrar)
@@ -223,7 +223,7 @@ const ChatPage: React.FC = () => {
           if (!isNaN(userId)) {
             try {
               const saveRes = await fetch(
-                "http://10.0.20.50:5000/api/chat/save",
+                "http://backend.burn-ia.local:5000/api/chat/save",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
