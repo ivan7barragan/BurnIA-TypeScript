@@ -19,5 +19,5 @@ app.use("/api/auth", authRoutes);
 // Puerto
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en http://10.0.20.50:${PORT}`);
+  console.log(`🚀 Servidor corriendo en http://10.0.20.49:${PORT}`);
 });

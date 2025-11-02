@@ -38,4 +38,5 @@ def predict():
     return jsonify(output)
 
 if __name__ == "__main__":
-    app.run(port=5001, debug=True)
+    #app.run(port=5001, debug=True)
+    app.run(host="detector.burn-ia.local", port=5001, debug=True)
