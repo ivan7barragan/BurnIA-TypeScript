@@ -52,7 +52,7 @@ const HistoryPage: React.FC = () => {
       return;
     }
 
-    fetch(`http://localhost:5000/api/chat/history/${userId}`)
+    fetch(`http://10.0.20.50:5000/api/chat/history/${userId}`)
       .then((res) => {
         if (!res.ok) throw new Error("Error al obtener historial");
         return res.json();
@@ -91,7 +91,7 @@ const HistoryPage: React.FC = () => {
 
   const eliminarRegistro = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/chat/${id}`, {
+      const res = await fetch(`http://10.0.20.50:5000/api/chat/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();
